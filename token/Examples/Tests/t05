@@ -1,0 +1,16 @@
+#!/bin/bash
+# Unterminated string (error)
+
+(/c/cs323/bin/run ./Token <<'END' > /dev/null) |& wc -l
+An unterminated string begins with a double quote and never ends.
+"An unterminated string begins with a double quote and never ends.
+END
+
+echo -----
+
+/c/cs323/bin/run ./Token <<'END' 2> /dev/null
+An unterminated string begins with a double quote and never ends.
+"An unterminated string begins with a double quote and never ends.
+END
+
+echo

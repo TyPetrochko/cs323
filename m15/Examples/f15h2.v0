@@ -1,0 +1,275 @@
+		P R E L I M I N A R Y    S P E C I F I C A T I O N
+
+					   Due 2:00 AM, Friday, 02 October 2015
+					   
+CPSC 323   Homework #2   A TeX-like Macro Processor
+
+(60 points) The basic function of the macro processor
+
+  m15 [file]*
+
+is to copy to the standard output the contents of the file(s) specified on the
+command line (or the standard input when no files are specified).  However,
+as the input is read, certain strings of characters (which specify macro
+expansion) are replaced by other strings of characters according to macro
+instructions contained in the input.  Aside: m15 belongs to the same family
+of software as the C preprocessor, shell and makefile variable expansion, and
+the TeX text formatting system.
+
+Some macros are built in.  New macros are defined using the \def macro
+
+  \def{NAME}{VALUE}
+
+which is replaced by the empty string.  Here NAME is a nonempty alphanumeric
+string and VALUE is a brace-balanced string (i.e., the number of left braces is
+greater than or equal to the number of right braces in every prefix and equal
+in the entire string).
+
+Thereafter, strings of the form \NAME{ARG}, where ARG is a brace-balanced
+string, are replaced by the string VALUE, with each occurrence of the character
+# replaced by the string ARG.
+
+A previously defined macro can be undefined with the \undef macro
+
+  \undef{NAME}
+
+which is replaced by the empty string.
+
+Text can be included conditionally with the \ifdef macro
+
+  \ifdef{NAME}{THEN}{ELSE}
+
+which is replaced by the brace-balanced string THEN if NAME is a defined macro
+and by the brace-balanced string ELSE otherwise; and with the \if macro:
+
+  \if{VALUE}{THEN}{ELSE}
+
+which is replaced by the brace-balanced string THEN if VALUE is a nonempty
+string and by the brace-balanced string ELSE otherwise.
+
+The \include macro
+
+  \include{PATH}
+
+is replaced by the contents of the file PATH (whose name must be brace-
+balanced).
+
+The \expandafter macro
+
+  \expandafter{BEFORE}{AFTER}
+
+is replaced by the string BEFORE followed by the output from running m15
+(recursively) on the string AFTER, using and modifying the current list of
+defined macros.
+
+After each substitution "copying" resumes at the START of the replacement
+string.  Note that brace-balanced arguments are not processed until they are
+expanded.
+
+To allow comments in the input, the character % causes m15 to ignore it and all
+subsequent characters up to the first non-blank, non-tab character following
+the next newline or the end of the current file, whichever comes first.  This
+convention applies only when reading characters from the file(s) specified on
+the command line (or the standard input if none is specified) or from an
+\include-d file, but not when calling m15 recursively while expanding the
+\expandafter macro.
+
+The \ character can also be used to "escape" a following \, #, %, {, or }
+so that it is not treated as a special character.  The effect of the \ is
+preserved until it is about to be output, at which point it is suppressed
+and the \, #, %, {, or } is output instead.
+
+i.e., in effect the \ is ignored and the following character is treated as a
+non-special character thereafter.  That is, in effect the pair of characters
+is treated as a macro with no arguments until it is expanded and output.
+
+When m15 detects errors, either
+
+* parsing errors (e.g., NAME is not a nonempty alphanumeric string or \NAME is
+  not immediately followed by {ARG}, where ARG is a brace-balanced string) or
+
+* semantic errors (e.g., NAME is not the name of a macro or there is an attempt
+  to redefine a macro or undefine a nonexistent macro),
+
+it writes a one-line message to stderr and exits.
+
+m15 need not detect cyclical macro definitions or \include macro instructions;
+infinite \expandafter loops; or attempts to define a macro with the same name
+as that of a built-in macro.
+
+Use the submit command (see below) to turn in the C source file(s) for m15, a
+Makefile, and your log file as assignment 2; e.g.,
+
+  % /c/cs323/bin/submit 2 Makefile m15.c log.m15
+
+YOU MUST SUBMIT YOUR FILES (INCLUDING THE LOG FILE) AT THE END OF ANY SESSION
+WHERE YOU HAVE SPENT AT LEAST ONE HOUR WRITING OR DEBUGGING CODE, AND AT LEAST
+ONCE EVERY HOUR DURING LONGER SESSIONS.  (All submissions are retained.)
+
+
+Examples
+~~~~~~~~
+1) INPUT:                                       OUTPUT:
+     \def{each}{\ifdef{#}{omega}{#, \each}}%      alpha, beta, gamma, omega
+       \each{alpha}{beta}{gamma}{each}
+
+   Explanation:
+
+   a) The \def defines \each to be the string "\ifdef{#}{omega}{#, \each}".
+
+   b) The % causes all characters up to but not including "\each" in the second
+      line to be discarded.
+
+   c) The \each{alpha} is expanded to "\ifdef{alpha}{omega}{alpha, \each}", so
+      the input is now "\ifdef{alpha}{omega}{alpha, \each}{beta}{gamma}{each}".
+
+   d) Since \alpha is not defined, the \ifdef expands to "alpha, \each" so the
+      input is now "alpha, \each{beta}{gamma}{each}".
+
+   e) The "alpha, " is output, so the input is now "\each{beta}{gamma}{each}".
+
+   f) The \each{beta} is expanded to "\ifdef{beta}{omega}{beta, \each}", so the
+      input is now "\ifdef{beta}{omega}{beta, \each}{gamma}{each}".
+
+   g) Since \beta is not defined, the \ifdef expands to "beta, \each" so the
+      input is now "beta, \each{gamma}{each}".
+
+   h) The "beta, " is output, so the input is now "\each{gamma}{each}".
+
+   i) The \each{gamma} is expanded to "\ifdef{gamma}{omega}{gamma, \each}", so
+      the input is now "\ifdef{gamma}{omega}{gamma, \each}{each}".
+
+   j) Since \gamma is not defined, the \ifdef expands to "gamma, \each" so the
+      input is now "gamma, \each{each}".
+
+   k) The "gamma, " is output, so the input is now "\each{each}".
+
+   l) The \each{each} is expanded to "\ifdef{each}{omega}{each, \each}", so the
+      input is now "\ifdef{each}{omega}{each, \each}".
+
+   m) Since \each is defined, the \ifdef expands to "omega" so that input is
+      now "omega".
+
+   n) The "omega" is output.
+
+   Thus the entire output is "alpha, beta, gamma, omega".
+
+2) INPUT:                                       OUTPUT:
+     \def{A}{aardvark}%                           aardvark = anteater
+      \expandafter{\def{B}}{{\A{}}}%
+       \undef{A}\def{A}{anteater}%
+	\B{} = \A{}
+
+   Explanation:
+
+   a) The \def defines \A to be the string "aardvark".
+
+   b) The % causes all characters up to but not including "\expandafter" in the
+      second line to be discarded.
+
+   c) The \expandafter{\def{B}}{{\A{}}} causes "{\A{}}" to be expanded to
+      "{aardvark}" and then is replaced by "\def{B}{aardvark}".
+
+   d) The % causes all characters up to but not including "\undef" in the third
+      line to be discarded.
+
+   e) The \undef{A}\def{A}{anteater} causes \A to be redefined as "anteater".
+
+   f) The % causes all characters up to but not including "\B" in the fourth
+      line to be discarded, so the remaining input is now "\B{} = \A{}".
+
+   g) The \B{} is expanded to "aardvark" so the remaining input is now
+      "aardvark = \A{}".
+
+   h) The "aardvark = " is output, so the input is now "\A{}".
+
+   i) The \A{} is expanded to "anteater" so the remaining input is now
+      "anteater".
+
+   j) The "anteater" is output.
+
+   Thus the entire output is "aardvark = anteater".
+
+
+Notes
+~~~~~
+1. Hwk2/m15 exists to answer your questions as to how m15 is supposed to work.
+   But ask if its behavior is not consistent with how you interpret the
+   specification, since my solutions have been known to have bugs.
+
+2. When m15 exits, all allocated storage must be reachable.
+
+3. malloc() and realloc() will fail (and return NULL) when there is not enough
+   memory free to satisfy the request.  Thus when writing robust software, it
+   is essential to test every value returned by malloc() and realloc() and take
+   appropriate action when that value is NULL.  However, m15 need not be that
+   robust and may assume that malloc() and realloc() will never fail.
+
+4. The number of macros will never be large enough to require more than a
+   linear search of the list of macros.
+
+5. ungetc() allows you to push ONE character back onto the input stream between
+   successive calls to getc().  Warning: Using ungetc() before the first getc()
+   or more than once between successive calls may not work as expected.
+
+6. m15 should run in time and space proportional to the number of characters
+   processed (= the sum of the lengths of the file(s) specified on the command
+   line (or the standard input if none is specified) and the lengths of all
+   macro expansions).  If your m15 fails any test by exceeding the time or
+   space limit, the burden of proof that this is not an error is on you.
+
+7. Points to Ponder:  ONE approach for writing m15 is to read the standard
+   input into a string and repeatedly output the leading character or replace
+   a leading macro by its value.  Can such an implementation run in time and
+   space proportional to the number of characters processed?  What additional
+   constraints does this property impose?  Why is amortized analysis relevant?
+
+8. The following capabilities will be worth AT MOST the number of points shown
+   below (these values include tests that require multiple functionalities):
+   * (10 points) \expandafter
+   * (10 points) run in time and space proportional to number of characters
+       processed
+   * ( 6 points) escaped characters.
+
+9. The effect of
+
+     \expandafter{BEFORE}{AFTER}
+
+   is to
+
+   * Call m15 (recursively) on an input stream containing the characters in
+       AFTER, giving the output stream AFTER'.
+
+   * Replace \expandafter{BEFORE}{AFTER} by BEFORE + AFTER' (where + denotes
+       string concatenation).
+
+   (However, you may not use additional processes/threads to accomplish these
+   actions.)  For example,
+
+     \def{B}{buffalo}%
+     \expandafter{\B{}}{\undef{B}\def{B}{bison}}
+
+   which is expanded to
+
+     bison
+
+   since \B{} is expanded BEFORE \undef{B}\def{B}.  Also, note that the
+   recursive call to m15 can affect what macros are currently defined and
+   their values, as in
+
+     \def{B}{buffalo}%
+     \expandafter{\undef{B}}{\def{B}{\B{}}}
+
+   which is "expanded" to
+
+     \def{B}{buffalo}%
+     \undef{B}\def{B}{buffalo}\undef{B}
+
+   Thus any def's made prior to the \expandafter are valid, and any new def's
+   or undef's made while expanding AFTER are valid thereafter.
+
+A. m15 can be implemented using an array (see Note 7), a stack, and/or one
+   or more temporary files.  There are advantages and disadvantages to each
+   approach.
+
+								CS-323-09/16/15

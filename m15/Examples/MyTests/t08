@@ -1,0 +1,5 @@
+\def{a}{b#} %
+\expandafter{\def\{}%
+{\a{}\}{\a{b}}}
+
+this should definitely not print!

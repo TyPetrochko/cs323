@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Macroexpansion: No # in VALUE
+
+/usr/bin/valgrind -q ./m15 <<END
+\def{MACRO}{VALUE =}
+\MACRO{1}
+\MACRO{2}
+\MACRO{3}
+\MACRO{4}
+\MACRO{5}
+\MACRO{6}
+\MACRO{7}
+END

@@ -1,0 +1,325 @@
+commit d6e37d4bfdc5d135eb74f7879268da19e05e662a
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Fri Nov 6 00:42:18 2015 -0500
+
+    Found a super tiny slight edge case where appending info after string table was not caught. Fixed it, moving onto documentation and logfile.
+
+commit 3703a774997075014a6a9b8b9cee4cf49b7b657c
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Fri Nov 6 00:08:10 2015 -0500
+
+    Made hash table one notch bigger, making it no longer even. Greatly increases speed.
+
+commit b88f7682c79b547bc8142bd3eff128a65e23739c
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 23:39:30 2015 -0500
+
+    Revert "Used a prime-ish number for hash table, but it seems slower"
+    
+    This reverts commit 16b8eb80c7e17fb56aad5b002d8468106ca63c14.
+
+commit 880e0d3e275e08d5ac0349a28d434eb2ea89f6a5
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 23:39:28 2015 -0500
+
+    Revert "Finished using prime number, but too slow."
+    
+    This reverts commit acaf3c6b2c8bfa2e1b54d162fa3331bfb1f12d89.
+
+commit 5f8f2758ad4d3ef749ede24303bef5dda053988c
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 23:37:46 2015 -0500
+
+    Revert "Revert "Finished using prime number, but too slow.""
+    
+    This reverts commit 85ab9d42ea26d39bbfcf1b1185a3ea6e22b883b7.
+
+commit 85ab9d42ea26d39bbfcf1b1185a3ea6e22b883b7
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 23:35:18 2015 -0500
+
+    Revert "Finished using prime number, but too slow."
+    
+    This reverts commit acaf3c6b2c8bfa2e1b54d162fa3331bfb1f12d89.
+
+commit acaf3c6b2c8bfa2e1b54d162fa3331bfb1f12d89
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 23:34:17 2015 -0500
+
+    Finished using prime number, but too slow.
+
+commit 16b8eb80c7e17fb56aad5b002d8468106ca63c14
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 23:26:55 2015 -0500
+
+    Used a prime-ish number for hash table, but it seems slower
+
+commit 06a653780e7691ee9ae1ace34c11b4bda25f5b1b
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 22:51:43 2015 -0500
+
+    Got -i -o working with new version
+
+commit 68c364c2cba972459f73a7636500adea40eacf1a
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 21:24:37 2015 -0500
+
+    Fixed ommitted fclose() in stRecover() causing memory leak
+
+commit 621ba62761baac512ab1a451bc5b1388fbc10422
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 20:39:26 2015 -0500
+
+    Fixed length issue, but considering rewriting string table format
+
+commit 2abe0f97373f2ff680065dfc7e9915a78bffed19
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 18:45:53 2015 -0500
+
+    About to fix when serialized string table is bigger (in length) than permitted by -m flag
+
+commit bebd70d2ef5a2a04a8af1a9f00120377f7a82813
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Nov 5 15:30:13 2015 -0500
+
+    Made USED a long
+
+commit 4a5cb1ff3810e85c3613e10dec3be6719fd77f66
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Wed Nov 4 11:37:43 2015 -0500
+
+    Restricted -p and -m to proper domains, but still need to make USED a long.
+
+commit 7e824504b5a9c677af69cfff0631e42a1a288b51
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Wed Nov 4 02:20:11 2015 -0500
+
+    Trying to make sure our -m -p arg fields yield error at same threshold
+
+commit 2d72b7da35bdb4cc9459cb97d4e3b18014f2cd74
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Wed Nov 4 01:23:47 2015 -0500
+
+    Cleaned up working directory, but no changes to code.
+
+commit 537751be3cc32b68b01d118b3e5fe686fab91f02
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Wed Nov 4 01:20:31 2015 -0500
+
+    Added helpful error checking for -i and -o
+
+commit 625a34e3a1d031d4bab5ac98bd6d4bad9a8f7f83
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Wed Nov 4 01:10:06 2015 -0500
+
+    Added some code to protect for errors, but not passing -i -o tests and test 17
+
+commit 5768fe29d614599c53ca7ba2efe741abfe52bcb4
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Tue Nov 3 22:21:47 2015 -0500
+
+    Added code to free all memory/destroy string table
+
+commit 1a4c1e43705348b6a0314239ac38c9135436ffc9
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Tue Nov 3 01:23:51 2015 -0500
+
+    Wrote code to serialize/recover string tables
+
+commit be40ed1a538854576e7abc77a99afab9598186e6
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 18:03:13 2015 -0500
+
+    No progress since last commit, but discovered that decode also works correctly
+
+commit 7007b5690ef9a34716454e4427eea831c5ad691a
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 18:02:25 2015 -0500
+
+    Stan and our implementation have matching output with pruning. Now going to work on decode.
+
+commit c553d335f390028245de36f9095901d13c3fb131
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 12:27:15 2015 -0500
+
+    Passes 16/18 tests, but does not use 'USED' while pruning
+
+commit f0a7ac6e7370e486c4584d279b0d79899bafd9f7
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 11:42:33 2015 -0500
+
+    Ran more tests... When pruning completely, Stan's implementation matches ours.
+
+commit 6f02b99102aa91f682995460b18d19911af288ce
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 11:39:02 2015 -0500
+
+    Synced the tables before/after for some cases
+
+commit cf8913963327068af09bc36ea0d00353b424ee6e
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 11:20:49 2015 -0500
+
+    Encode and Decode seem to match for pruning on big binary files
+
+commit ff042cfdb0fd49eb54354196d01500dde59f7eb7
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 11:17:41 2015 -0500
+
+    After much debugging, discovered that his prunes when there is no room for latest code, and then does not insert this code. Our encodes match
+
+commit 13d310e3b83bbfce0bf8ed151bd9e3ec6fe3cd53
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 09:47:40 2015 -0500
+
+    Removed .swp's
+
+commit 8235e39204cbf424a11d8baa30a86f14d20ab073
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 09:47:12 2015 -0500
+
+    Got pruning synced, but not sure if properly pruning
+
+commit f6c0e1a024c2495daa2747efe4978660536fc07a
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 09:32:48 2015 -0500
+
+    Removed .swp
+
+commit 9bdc9131452e48d70479e4faf53daa8ce4cbf642
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 09:32:32 2015 -0500
+
+    Stan and mine match up sync-wise
+
+commit aeb73aa5f7b42f16226768782941b8f8121fef03
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 01:42:46 2015 -0500
+
+    Trying to sync pruning to make num of bits match
+
+commit 49a19da28407f8eefd851a6f3e8f615628311b68
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Mon Nov 2 01:10:49 2015 -0500
+
+    Can't dump string table
+
+commit a9b314b1dfb08fe4b9a1d5d7b21d9910f0fc274a
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 23:50:09 2015 -0500
+
+    Encode and Decode agree on usages when all is said and done
+
+commit 1c0d0489cb48f4ec6e27674d43bba5b3a44818d3
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 23:42:01 2015 -0500
+
+    Added code to alter usage tables
+
+commit c6fbdacd43bdfb6e308b44b0948ed2173ffb333e
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 22:31:45 2015 -0500
+
+    Revert "Trying to make it lag, not really working though"
+    
+    This reverts commit 71c24902076b0872498cc1d87ed4544ba7839565.
+
+commit 0421bc836270d4919c1a7083b87b8fd0329651f2
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 22:30:27 2015 -0500
+
+    Revert "Revert "Removed background processes""
+    
+    This reverts commit bdcfc2e02365a3ce5476d695a910acc20ac903ca.
+
+commit bdcfc2e02365a3ce5476d695a910acc20ac903ca
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 22:29:21 2015 -0500
+
+    Revert "Removed background processes"
+    
+    This reverts commit 67ae550ce2dc2723756908de12f9aafce01d1733.
+
+commit 71c24902076b0872498cc1d87ed4544ba7839565
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 22:29:08 2015 -0500
+
+    Trying to make it lag, not really working though
+
+commit 67ae550ce2dc2723756908de12f9aafce01d1733
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 19:47:51 2015 -0500
+
+    Removed background processes
+
+commit 1091e8797ae93e9afd90ed48bbfcb5cf98a515f1
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 14:13:12 2015 -0500
+
+    13/18 tests. Need to finish implementing -p, -i, and -o
+
+commit 1ce89eacda23495f1e18f64a03e8ba3866cd8d1a
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 12:21:55 2015 -0500
+
+    Encode and decode work in stage two with no flags. Numbits looks correct.
+
+commit 110f39b9d962b6fe170143ea4ebd8086fbf7a636
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sun Nov 1 10:57:24 2015 -0500
+
+    Got tests 1-3 working. Fixing bug with numBits being too high
+
+commit 0efb5ff7b2cbc01825617b02e3a94f7d55dcdc76
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sat Oct 31 20:27:59 2015 -0400
+
+    Getting an error compressing and then decompressing, when numbits increases
+
+commit 0c6362b2242c956691d86bf0a6a85f0eeab789b6
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sat Oct 31 16:59:17 2015 -0400
+
+    Rewrote Stringtable code, testing/debugging soon and fixing lzw.c constructor
+
+commit 8a46242367730563ee2ec48a4936f2c306940379
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sat Oct 31 15:35:22 2015 -0400
+
+    Got hard links set up
+
+commit 08d51743aba73b91f760d7e12dd8be016ea6ab53
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Sat Oct 31 14:44:59 2015 -0400
+
+    Got encode and decode functions working
+
+commit 7240ae20180f94b071d8cad5bf1c174fae667f82
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Fri Oct 30 15:33:19 2015 -0400
+
+    Encode and decode written, need debugging
+
+commit 07b3c7eee965ea954069a42e52ebdc40a7f47eb1
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Fri Oct 30 14:05:28 2015 -0400
+
+    Functioning encode, working on decode right now.
+
+commit 5ab6d31aa330fb27b5d60660d09208efdef048d4
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Fri Oct 30 01:12:05 2015 -0400
+
+    Removed extraneous test file
+
+commit 0d3d2cbbd32a77da05f767412b1fdc0369bdc02e
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Fri Oct 30 01:11:31 2015 -0400
+
+    Got all string table code working, minus the pruning
+
+commit 82b055f43e9973ea80d74467e0b09d3d22b5b638
+Author: Tyler Petrochko <ty.petrochko@gmail.com>
+Date:   Thu Oct 29 23:26:54 2015 -0400
+
+    Working on String Table implementation

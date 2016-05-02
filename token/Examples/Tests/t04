@@ -1,0 +1,12 @@
+#!/bin/bash
+# Escaped metacharacters
+
+/c/cs323/bin/run ./Token -v <<'END'
+\<token\>
+\|value\|
+\(expression\)
+M\&Ms
+Baby\;Ruth
+END
+
+echo

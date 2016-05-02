@@ -1,0 +1,6 @@
+1) Get file concatenation w/ comments working
+2) Get ringbuffer working (make sure it's faster than my implementation)
+3) Check Alex's edgecases
+4) Start making edgecases
+5) Go to every place where an error is issued, make sure that nothing CALLING it also prints error.
+6) Make a faster strappend for ringbuffer

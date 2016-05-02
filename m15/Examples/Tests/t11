@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# \expandafter: Example from specification
+
+/usr/bin/valgrind -q ./m15 <<END
+\def{A}{aardvark} \expandafter{\def{B}}{{\A{}}}
+\undef{A} \def{A}{anteater} \B{} != \A{}
+END

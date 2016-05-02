@@ -1,0 +1,10 @@
+#!/bin/bash
+# Adjacent strings
+
+/c/cs323/bin/run ./Token <<END
+'su''per''cal''i''frag''i''lis''tic''ex''pi''al''i''do''cious'
+'su'-'per'-'cal'-'i'-'frag'-'i'-'lis'-'tic'-'ex'-'pi'-'al'-'i'-'do'-'cious'
+'su' 'per' 'cal' 'i' 'frag' 'i' 'lis' 'tic' 'ex' 'pi' 'al' 'i' 'do' 'cious'
+END
+
+echo

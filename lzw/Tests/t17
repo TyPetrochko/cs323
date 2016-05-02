@@ -1,0 +1,39 @@
+#!/bin/bash
+# no flags, NCODE strings: size(table) <= TIMES*NCODE+ADD
+
+RUN="/usr/bin/valgrind -q"
+
+NAME=/tmp/lzw.n.$USER.$$
+EFLAG="-i $NAME"
+XFLAG="-o $NAME"
+FILE=/c/cs323/Style/C-INGRES
+
+NCODE=4096
+TIMES=8
+ADD=64
+
+EOUT=/tmp/lzw.e.$USER.$$
+DOUT=/tmp/lzw.d.$USER.$$
+XOUT=/tmp/lzw.x.$USER.$$
+
+trap "/bin/rm -f $EOUT $DOUT $XOUT $NAME" 0 1 2 3 9 15
+
+$RUN ./encode $XFLAG < $FILE > $XOUT        # Create table
+
+cat $FILE | $RUN ./encode $EFLAG > $EOUT
+cat $EOUT | $RUN ./decode        > $DOUT
+cat $DOUT | /usr/bin/cmp - $FILE
+
+ESIZE=`wc -c < $EOUT`
+XSIZE=`wc -c < $XOUT`
+TSIZE=`wc -c < $NAME`
+
+BOUND=$(($TIMES * $NCODE + $ADD))
+if test $TSIZE -gt $BOUND -o -n "$DEBUG_SCRIPT" ; then
+  echo "size(table) = $TSIZE > $BOUND = bound"
+fi
+
+BOUND=$((99 * $XSIZE / 100))
+if test $ESIZE -gt $BOUND -o -n "$DEBUG_SCRIPT" ; then
+  echo "size(-i NAME) = $ESIZE > $BOUND = .99 * $XSIZE = .99 * size(no flags)"
+fi

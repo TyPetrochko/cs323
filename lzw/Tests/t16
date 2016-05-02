@@ -1,0 +1,27 @@
+#!/bin/bash
+# size(-i NAME) < size(no flags)?
+
+RUN="/c/cs323/bin/run"
+
+NAME=/tmp/lzw.n.$$
+EFLAG="-i $NAME"
+XFLAG="-o $NAME"
+FILE=/c/cs323/Style/C-UTZOO
+
+EOUT=/tmp/lzw.e.$USER.$$
+DOUT=/tmp/lzw.d.$USER.$$
+XOUT=/tmp/lzw.x.$USER.$$
+
+cat $FILE | $RUN ./encode $XFLAG > $XOUT        # Create table
+
+cat $FILE | $RUN ./encode $EFLAG > $EOUT
+cat $EOUT | $RUN ./decode        > $DOUT
+cat $DOUT | /usr/bin/cmp - $FILE
+
+ESIZE=`wc -c < $EOUT`
+XSIZE=`wc -c < $XOUT`
+
+BOUND=$((99 * $XSIZE / 100))
+if test $ESIZE -gt $BOUND -o -n "$DEBUG_SCRIPT" ; then
+  echo "size(-i NAME) = $ESIZE > $BOUND = .99 * $XSIZE = .99 * size(no flags)"
+fi

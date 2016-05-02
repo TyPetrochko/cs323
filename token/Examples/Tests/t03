@@ -1,0 +1,8 @@
+#!/bin/bash
+# Comments
+
+/c/cs323/bin/run ./Token -v <<END
+The quick brown fox jumped over the lazy #dog.
+END
+
+echo

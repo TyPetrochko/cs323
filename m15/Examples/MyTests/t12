@@ -1,0 +1,2 @@
+\def{a}{\\}
+\a{}def{b}{} \ifdef{b}{if you see this, there's an error}{everything works fine!}

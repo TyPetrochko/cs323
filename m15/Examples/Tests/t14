@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Escaped characters: Simple
+
+TESTS=/c/cs323/Hwk2/Tests
+
+/usr/bin/valgrind -q ./m15 < $TESTS/t14x
+
+echo -----
+
+/usr/bin/valgrind -q ./m15   $TESTS/t14x
+
+echo -----
+
+/usr/bin/valgrind -q ./m15 <<'END'
+\def{escape}{To escape a # precede it by a backslash}
+\escape{\\}
+\escape{\{}
+\escape{\}}
+END

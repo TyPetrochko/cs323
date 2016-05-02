@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# \def: Deeply nested braces in VALUE/ARG
+
+/usr/bin/valgrind -q ./m15 <<END
+\def{a}{#}
+\def{b}{{#}}
+\def{c}{{{#}}}
+\def{d}{{#}{#}}
+\def{e}{{{{#}}}}
+\def{f}{{{#}{#}}}
+\def{g}{{{#}}{#}}
+\def{h}{{#}{{#}}}
+\def{i}{{#}{#}{#}}
+
+\a{a}
+\b{{b}}
+\c{{{c}}}
+\d{{d}{d}}
+\e{{{{e}}}}
+\f{{{f}{f}}}
+\g{{{g}}{g}}
+\h{{h}{{h}}}
+\i{{i}{i}{i}}
+END

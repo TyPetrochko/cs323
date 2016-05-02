@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Linear time/space: Very long input with no macros
+
+TESTS=/c/cs323/Hwk2/Tests
+RUN=/c/cs323/bin/run
+
+$TESTS/t16.pl   500000 | /usr/bin/valgrind -q ./m15 | /usr/bin/wc -c
+		
+$TESTS/t16.pl  1000000 | $RUN                 ./m15 | /usr/bin/wc -c
+
+$TESTS/t16.pl 10000000 | $RUN                 ./m15 | /usr/bin/wc -c
+
+
+# Repeat Test #15 to penalize declaration of large buffers
+$TESTS/t15

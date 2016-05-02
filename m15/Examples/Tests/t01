@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Text: No macro instructions
+
+TESTS=/c/cs323/Hwk2/Tests
+
+/usr/bin/valgrind -q ./m15 < $TESTS/t01x
+
+echo -----
+
+/usr/bin/valgrind -q ./m15 $TESTS/t01x $TESTS/Files/?

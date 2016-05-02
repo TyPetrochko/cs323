@@ -1,0 +1,11 @@
+#!/bin/bash
+# Greedy parsing
+
+/c/cs323/bin/run ./Token <<'END'
+>>>
+|||
+&&&
+<<<
+END
+
+echo

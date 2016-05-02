@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Errors: {ARG} is not brace-balanced
+
+(/usr/bin/valgrind -q ./m15 <<END >/dev/null) |& /usr/bin/wc -l
+\def{name}{value}\name{{arg}
+END

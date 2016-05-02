@@ -1,0 +1,2 @@
+\def{a}{Buff #}%
+ \a{}\a{test}

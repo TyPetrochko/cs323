@@ -1,0 +1,1 @@
+\expandafter{\ifdef{a}{this should print}{this shouldn't print}}{\ifdef{a}{this shouldn't print}{this should print} \def{a}{#}}

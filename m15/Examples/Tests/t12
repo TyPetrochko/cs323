@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Include: Simple file with no macros
+
+/usr/bin/valgrind -q ./m15 <<END
+INCLUDE simple file with no macros
+
+\include{/c/cs323/Hwk2/Tests/t01x}
+
+Did we include the file?
+END

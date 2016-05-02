@@ -1,0 +1,2 @@
+this should turn into my full name: \def{title}{Mr. #} \def{firstname}{tyler} \def{mi}{h} \def{lastname}{petrochko} \def{name}{\firstname{} \mi{} \lastname{}} % definitely ignore this
+	\title{\name{}}

@@ -1,0 +1,19 @@
+FIRST/FOREMOST
+
+Optimize strip comments, and possible lineComplete  for faster return values
+
+
+a) Fix for null characters
+b) Get test 12 working
+c) TEST 13
+d) Get stripcomments O(n) rather than n squared
+e) Do the same for getLineTokens
+
+1) Refractor lineincomplete code so that getLine is not O(n squared)
+    i.e. count number of valid quotes or something
+2) Fill in tokendict, etc.
+3) Try these cases:
+    i) Type a quote, then send EOF
+    ii) Type a quote, hit enter, then send EOF
+    iii) Escape a linebreak, and give EOF before linebreaking
+    iv) Escape a linebreak, hit enter, and give EOF

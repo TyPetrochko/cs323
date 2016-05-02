@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Macroexpansion: Many #s in VALUE
+
+# Macroexpansion: Non-adjacent #s in VALUE
+/usr/bin/valgrind -q ./m15 <<END
+\def{MACRO}{VALUE = # x # x # = ?}
+\MACRO{1}
+\MACRO{2}
+\MACRO{3}
+\MACRO{4}
+\MACRO{5}
+\MACRO{6}
+\MACRO{7}
+END
+
+# Macroexpansion: Adjacent #s in VALUE
+/usr/bin/valgrind -q ./m15 <<END
+\def{B}{## = disease}
+\B{beri}
+\def{W}{capital = ##, Washington}
+\W{Walla}
+\def{P}{capital = ##}
+\P{Pago}
+\def{M}{##########}
+A\M{ very,} very hard test.
+END

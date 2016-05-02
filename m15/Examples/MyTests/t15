@@ -1,0 +1,2 @@
+\def{each}{\ifdef{#}{omega}{#, \each}}%      alpha, beta, gamma, omega
+       \each{alpha}{beta}{gamma}{each}

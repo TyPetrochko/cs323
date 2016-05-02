@@ -1,0 +1,37 @@
+1) Add error checking code for reading in serialized string tables (i.e. trying to add to StringTable when its full)
+2) It's possible that after pruning, the algorithm still relies on the last character it saw (finalK or oldC).
+
+
+NEW TODO
+
+x1) Make code to free all memory upon program execution
+x2) Test ordering the -m -p -o -i flags (make sure it uses last one)
+3) Make sure it issues error when:
+    xa) encode -i lists a file that doesn't exist or -o can't write
+    b) encode -p gives a non-positive int
+	i) try -p asdf
+	ii) try -p 0
+	iii) try -p -1
+    c) When MAXBITS or USED are not positive decimal integers without leading + or too large to store in a long (> LONG_MAX)
+	i.e. look at strtol()
+    c) any invalid flags or command line arguments
+4) Make sure that at the END of encode or decode, and "-o path" was specified, and path cannot be written it issues an error message
+    a) Issues error message if path is read-only
+    b) Silently fails if path is a directory
+    c) Completely overwrites path if it already exists and is not readonly
+5) Make sure that if ./decode's input file is missing or corrupted, it issues an error message
+6) Make sure that if ./decode's input file was corrupted and it's not caught, i.e. we're decoding
+    and there's a code that could not have been there - we abort and issue an error message.
+7) Make sure that if ./decode reads a corrupted file, it fails gracefully (and gives error loc. if possible)
+8) Find all TODO's and clean them up!
+9) Make sure not storing string table too big!
+10) Run valgrind on decode
+11) Test -o NAME with read-only file, directory, etc.
+12) Make USED a long int
+13) Make sure that if command line has MAXBITS m, m is also expressible as a long int
+14) Put it in folder called encode or decode and make sure it's okay
+15) Give error message when an invalid arg is given, i.e. ./decode out
+
+a) Write log.lzw
+b) Prettify code, delete t_main on StringTable.c:w
+

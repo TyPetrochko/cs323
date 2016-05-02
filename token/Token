@@ -1,0 +1,247 @@
+#! /usr/bin/python
+import sys
+
+# All allowed tokens
+tokendict = {'<' : 21, '<<' : 22, '>' : 31, 
+	    '>>' : 32, '>&' : 33, '|' : 41, 
+	    '|&' : 42, ';' : 51, '&' : 52, 
+	    '&&' : 61, '||' : 62, '(' : 71,
+	    ')' : 72}
+
+# By default, do not print output after every line
+shouldPrintInput = False
+
+# Was the program executed correctly?
+if len(sys.argv) > 2 or (len(sys.argv) == 2 and sys.argv[1] != "-v"):
+    print "Usage: ./Token [-v]"
+    sys.exit(0)
+elif len(sys.argv) == 2 and sys.argv[1] == "-v":
+    shouldPrintInput = True
+
+# Determine whether a char at a given index is escaped by counting the
+# number of adjacent backslashes. An odd number of backslashes means
+# that it IS escaped.
+def charEscaped(line, index):
+    i = index - 1
+    backslashCount = 0
+    while(i >= 0 and line[i] == '\\'):
+	backslashCount += 1
+	i -= 1
+    return (backslashCount % 2 == 1)
+
+# Is there a single meta character at index?
+def singleMetaCharAt(line, index):
+    # Out of bounds?
+    if index >= len(line) or index < 0:
+	return False
+
+    if line[index] in tokendict:
+	escaped = charEscaped(line, index)
+	if not escaped:
+	    return True
+	else:
+	    return False
+    else:
+	return False
+
+# Is there a double meta character at index?
+def doubleMetaCharAt(line, index):
+    # Again - check bounds
+    if index >= len(line) - 1 or index < 0:
+	return False
+    
+    if (line[index] + line[index + 1]) in tokendict:
+	escaped = charEscaped(line, index)
+	if not escaped:
+	    return True
+	else:
+	    return False
+    else:
+	return False
+
+def stripComments(line):
+    # Since python strings are immutable, we'll have to return a new string
+    # with stripped comments.
+    toReturn = ""
+    for i, c in enumerate(line):
+	# For optimization
+	if c != '#':
+	    toReturn += c
+	    continue
+	
+	# This char right after a meta char?
+	precededByMetaChar = (singleMetaCharAt(line, i - 1) 
+			    or doubleMetaCharAt(line, i - 2))
+
+	# Is it the beginning of the line OR proceeded by unescaped space/tab?
+	followingNewlineOrTab = (i == 0 or ((line[i-1]).isspace() 
+	    and not charEscaped(line, i - 1)))
+	
+	if (c == '#' and lineComplete(toReturn) == "" 
+	    and (precededByMetaChar or followingNewlineOrTab)):
+	    break
+	else:
+	    toReturn += c
+    return toReturn
+
+# Check if a line is complete or not. If so, returns true empty string
+def lineComplete(line):
+    # We will scan right until we hit a quote (' or "), set 
+    # quoteType to that quote char, and set quoteComplete false.
+    # Then, when we hit an unescaped char of the same type, we 
+    # reset quoteType and set quoteComplete true again. 
+
+    quoteComplete = True
+    quoteType = ""
+    for i, c in enumerate(line):
+	isAQuote = (c == '"' or c == "'")
+	if not isAQuote:
+	    continue
+	escaped = charEscaped(line, i)
+	if quoteComplete and not escaped and isAQuote:
+	    # Beginning of a quotation
+	    quoteType = c
+	    quoteComplete = False
+	elif not quoteComplete and isAQuote and c == quoteType:
+	    # Can only escape double quotes
+	    if (quoteType == "'" or (quoteType == '"' and not escaped)):
+		quoteType = ""
+		quoteComplete = True
+
+    if not quoteComplete:
+	return quoteType
+    elif line[-1:] == '\\' and not charEscaped(line, len(line) - 1):
+	return '\\'
+    else:
+	return ""
+    
+# Get a full, line of input, with quote and escaped newlines being considered
+def getLine(printInput):
+    line = ""
+    # User may abort
+    try:
+	line += raw_input("% ")
+    except Exception, e:
+	if lineComplete(line) != "":
+	    sys.stderr.write('Token: unterminated string\n')
+	sys.exit(0)
+
+    # Is -v flag set?
+    if(printInput):
+	print line
+
+    line = stripComments(line)
+    while True:
+	# Is there a char causing incompleteness?
+	offendingChar = lineComplete(line)
+
+	# No offending char, i.e. we're done
+	if(offendingChar == ""):
+	    break
+	
+	# Only strip away backslash if its not a single quote
+	if(line[-1:] == '\\' and offendingChar != "'" and not charEscaped(line, len(line) -1)):
+	    line = line[:-1]
+	else:
+	    line += '\n'
+	
+	# Prompt continued input
+	try:
+	    nextInput = raw_input("> ")
+	except Exception, e:
+	    if lineComplete(line) != "":
+		sys.stderr.write('Token: unterminated string\n')
+		sys.exit(0)
+	    else:
+		return line
+	
+	# Continued input lines also respond to -v flag
+	if(printInput):
+	    print nextInput
+
+	line += nextInput
+	line = stripComments(line)
+    return line
+
+# Return a list of all tokens on this line
+def getLineTokens(line):
+    # Keep a running tally of all line tokens
+    lineTokens = []
+
+    i = 0
+    while i < len(line):
+	c = line[i]
+	
+	# Greedy - look for a double meta char first
+	if i < len(line) - 1:
+	    nextTwoChars = c + line[i + 1]
+	    if nextTwoChars in tokendict:
+		lineTokens.append([tokendict.get(nextTwoChars), nextTwoChars])
+		i += 2
+		continue
+	    
+	# Non-greedy - look for a single meta char
+	if c in tokendict:
+	    lineTokens.append([tokendict.get(c), c])
+	    i += 1
+	    continue;
+
+	# If not whitespace, then it's a simple token
+	elif not c.isspace():
+	    simpletoken = ""
+
+	    # We will use some fields to mimic "lineComplete" to avoid O(n^2)
+	    quoteComplete = True
+	    quoteType = ""
+
+	    # This could just call lineComplete(simpletoken) every loop iteration,
+	    # but this would be very time inefficient since it's repeating itself
+	    while i < len(line):
+		c = line[i]
+		simpletoken += c
+
+		escaped = charEscaped(line, i)
+		isAQuote = (c == '"' or c == "'")
+
+		# Check if simpletoken is a "complete" token
+		if quoteComplete and not escaped and isAQuote:
+		    # Beginning of a quotation
+		    quoteType = c
+		    quoteComplete = False
+		elif not quoteComplete and isAQuote and c == quoteType:
+		    # Can only escape double quotes
+		    if (quoteType == "'" or (quoteType == '"' and not escaped)):
+			quoteType = ""
+			quoteComplete = True
+
+		# Now determine fields necessary to see whether or not we're done with simpletoken
+		endOfLine = (i == len(line) - 1)
+		nextCharWhiteSpace = (not endOfLine and (line[i + 1]).isspace())
+		nextCharMeta = ((singleMetaCharAt(line, i + 1) 
+		    or doubleMetaCharAt(line, i + 1)))
+		simpletokenComplete = (quoteComplete and not (simpletoken[-1:] == '\\' 
+		    and not charEscaped(simpletoken, len(simpletoken) - 1)))
+
+		i += 1
+		if endOfLine or (simpletokenComplete and (nextCharWhiteSpace or nextCharMeta)):
+		    # Hit end of 11 token
+		    lineTokens.append([11, simpletoken])
+		    break
+	else:
+	    # This is whitespace
+	    i += 1
+	    continue
+    return lineTokens
+
+# Actual program begins here. As long as program is not aborted, prompt 
+# for input, process the input, and return the input to stdout.
+try:
+    while True:	
+	line = getLine(shouldPrintInput)
+	lineTokens = getLineTokens(line)
+	
+	for t in lineTokens:
+	    print t[1] + " : " + str(t[0])
+except KeyboardInterrupt, e:
+    # We want a newline when aborting with CTRL-C
+    print ""

@@ -1,0 +1,13 @@
+#!/bin/bash
+# >, >>, and ; tokens
+
+/c/cs323/bin/run ./Token -v <<'END'
+a > bc > def > ghij
+>3>14>159>2653>
+a >> bc >> def >> ghij
+>>3>>14>>159>>2653>>
+a ; bc ; def ; ghij
+;3;14;159;2653;
+END
+
+echo

@@ -1,0 +1,54 @@
+ESTIMATE of time to complete assignment: 45 hours
+
+	   Start  Time
+     Date  Time   Spent Work completed
+     ----  -----  ----  --------------
+     10/29 22:00  4:00  Worked on string table implementation
+     10/30 14:00  8:00  Finished string table, got rough encode/decode
+     10/31 14:00  7:00	Rewrote string table code, debugged encode/decode
+     11/1  11:00  6:00  Struggled with pruning, tried to "lag" encode behind
+     11/2  09:00  6:00  Got pruning synced and working
+     11/3  01:00  2:00  Got -i -o working
+     11/3  15:00  5:00  Handled some edge cases
+     11/4  10:00  6:00  Handled more edge cases
+     11/5  18:00  7:00  Handled more edge cases, documented, debugged
+                  -----
+		  51:00 TOTAL time spent
+
+
+I discussed this project with Alex Ringlein, Tyler Dohrn, and Alan Liu.
+
+Like most students, I struggled the most to synchronize encode and decode, but after writing on a sheet of paper:
+
+    ENCODE			    DECODE
+
+    reads 'a', sends 1, adds...	    receives '1', outputs 'a', adds...
+    reads 'ab', sends 4, adds...    receives '4', outputs 'ab', adds...
+
+	... etc (or something similar)
+
+... I made fast progress getting them synced up. I also found the gcc "Intro to GDB commands" document (https://gcc.gnu.org/onlinedocs/gcc-3.3.6/gnat_ug_unx/Introduction-to-GDB-Commands.html), which, for whatever reason, finally got GDB to make sense to me. Basically, it helped get the point across that you really only need a few functions inside gdb, i.e. 'l', 'n', 's', 'set', 'p', 'break', and 'run' to effectively debug most scenarios. I'm also trying to learn more commands/tricks, such as setting conditional breaks based on hardware watchpoints. In many of my functions, I have something like
+
+	int err = 0;
+
+	if(fread(&prefix, sizeof(int), 1, f) < 1){
+	    err = 1;
+	    break;
+	}
+
+	// Do not add the same code twice
+	if(stGetCode(toReturn, prefix, k) != -1)
+	    err = 1;
+
+	// Prefix must be length than code (we're about to add at index "len")
+	if(prefix >= toReturn->len)
+	    err = 1;
+
+	// Prefix must already be in the string table, and not empty
+	if(!stCodeExists(toReturn, prefix) || prefix == EMPTY)
+	    err = 1;
+
+... which lets me set err as a hardware watchpoint, and I can just debug UNTIL the value of e changes.
+
+As far as challenges go, I tried to exactly duplicate the output of your original ./encode file, which - while practical in the debugging sense - forced me to adopt a solution that didn't necessarily agree with how I would tackle the problem.
+

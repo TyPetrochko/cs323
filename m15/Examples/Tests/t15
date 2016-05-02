@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Linear time/space: Very short input with simple expansion and limited memory
+
+RUN=/c/cs323/bin/run
+
+$RUN -dsize=5m ./m15 <<END
+\def{MACRO}{VALUE = #}
+\MACRO{1}, \MACRO{2}, \MACRO{3}, \MACRO{4}, \MACRO{5}, \MACRO{6}, \MACRO{7}
+END

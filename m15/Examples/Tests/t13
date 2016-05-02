@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Comments: Simple
+
+# Comments: Ignore remainder of line
+/usr/bin/valgrind -q ./m15 <<END
+Did you read % this file to see what it tests?  Did you read
+the final specification?
+END
+
+echo -----
+
+# Comments: Ignore leading blanks/tabs on following line
+/usr/bin/valgrind -q ./m15 <<END
+Did you read % this file to see what it tests?  Did you read
+	     the final specification?
+END

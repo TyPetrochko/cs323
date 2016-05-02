@@ -1,0 +1,11 @@
+{
+  "stage": ["simple", "( command )", "( op )", " ( simple )"],
+  "pipeline": ["stage", "pipeline | stage", "pipeline | cat", "simple", "pipeline | simple"],
+  "and-or": ["pipeline", "and-or && pipeline", "and-or || pipeline", "simple && simple", "simple || simple"],
+  "sequence": ["and-or", "and-or", "and-or", "sequence ; and-or", "sequence & and-or"],
+  "command": ["sequence", "sequence ;", "sequence &", "simple ; simple", "simple ; simple"],
+  "simple": ["op", "op", "op", "op", "op", "op > outfile", "op < infile", "op >> outfile", "op < infile > outfile", "< infile op", "< infile op > outfile", "< infile op >> outfile"],
+  "infile": ["words", "OUTPUT"],
+  "outfile" : ["OUTPUT"],
+  "op" : ["cat infile", "echo hello", "cd .", "dirs", "wait", "printenv ?", "printenv ?", "/c/cs323/Hwk5/Tests/sleeper alpha 0.4 gamma 1", "sleep 0.5", "./return -1", "./return 0", "cat nonexistent-file", "cat infile | cat", "cd zzz", "wait zzz", "./nonexistent executable", "nonexistent executable", "./Timer a", "./Timer b", "/c/cs323/Hwk5/Tests/sleeper potato 0.9 tomato 0", "/c/cs323/Hwk5/Tests/sleeper hi 2.0 bye -1"]
+}

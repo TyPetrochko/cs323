@@ -1,0 +1,18 @@
+#!/bin/bash
+# Local variables with simple command
+# REQUIRES: LOCAL
+
+FILES=
+PROGS="printenv"
+
+RUN="/c/cs323/bin/run -wall=2"
+trap "/bin/rm -f $FILES; \
+      /usr/bin/killall -q -u $USER Bsh $PROGS 2>/dev/null" 0 1 2 3 9 15
+ulimit -u 300
+
+$RUN ./Bsh <<END
+A=aardvark B=bluebird C=cardinal /usr/bin/printenv A B C
+echo End of test
+END
+
+echo

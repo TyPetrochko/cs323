@@ -1,0 +1,62 @@
+
+** Have built in commands accept redirection (we can fake this)
+*** Test Alan's case
+****** Implement SIGNALS
+
+1) Whenever we return STATUS, it should really be:
+    (WIFEXITED(x) ? WEXITSTATUS(x) : 128+WTERMSIG(x))
+
+2) Also return EXIT_SUCCESS or EXIT_FAILURE
+3) "Still reachable" memory on piping
+4) "Still reachable" memory on ./Timer &
+5) Test various signals, i.e. CNTRL-C, CNTRL-D, CNTRL-X, CNTRL-Z
+6) Test various combinations of errors
+7) Check to make sure cd <dir> dir actually works
+8) Check return values on failure
+9) Check redirecting 2> (stderr)
+10) Test external variables more thoroughly
+11) Make sure improperly phrased directory commands AND any others return 1 as status
+12) Make sure no redirections on wait? Is this allowed?
+13) Check returned status on wait (Should it be 0? Or last command to die?)
+14) CNTRL-D on wait may spawn subprocesses?
+15) Check setting variables for built-in commands. If they fail, do the variables still get set in correct order?
+16) Make sure that when you CNTRL-C, it doesn't abort completely! (Just returns to bash)
+
+
+Things from "Fine points"
+1) Implement signals
+2) Make sure subcommand returns status of last command/subcommand executed
+3) Check to make sure case:
+
+    ./progA && ./progB || ./progC
+
+...has matching behavior in our/his implementation.
+4) Verify that cases:
+    cd /c/cs323 | ls
+
+    and
+
+    ls & cd & cd .. & ls
+
+...has matching behavior.
+5) CHECK that following calls are protected
+
+chdir()
+execvp()
+fork()
+getcwd()
+open()
+pipe()
+
+**** POST SUBMISSION ****
+
+1) fix case:
+
+sleep 10 & wait
+CNTRL-C
+
+2) fix stdout flushing case
+
+Bsh < script >output
+...Where script is
+dirs >test

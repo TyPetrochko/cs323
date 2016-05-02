@@ -1,0 +1,19 @@
+#!/bin/bash
+# Simple pipe
+# REQUIRES: PIPE
+
+FILES=
+PROGS="die cat fmt wc"
+
+RUN="/c/cs323/bin/run -wall=2"
+trap "/bin/rm -f $FILES; \
+      /usr/bin/killall -q -u $USER Bsh $PROGS 2>/dev/null" 0 1 2 3 9 15
+ulimit -u 300
+
+$RUN ./Bsh <<END
+/c/cs323/Hwk5/Tests/die 1 cat /c/cs323/Hwk5/Tests/stk.txt | /usr/bin/fmt -48
+/c/cs323/Hwk5/Tests/die 1 cat /c/cs323/Style/C-IH | wc -l
+echo End of test
+END
+
+echo

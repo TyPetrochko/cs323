@@ -1,0 +1,34 @@
+#!/bin/bash
+# Set status
+#   Pipe
+# REQUIRES: PIPE, STATUS
+
+FILES=
+PROGS="false true printenv"
+
+RUN="/c/cs323/bin/run -wall=2"
+trap "/bin/rm -f $FILES; \
+      /usr/bin/killall -q -u $USER Bsh $PROGS 2>/dev/null" 0 1 2 3 9 15
+ulimit -u 300
+
+$RUN ./Bsh <<\END
+  /usr/bin/false
+  /usr/bin/true  | /usr/bin/true
+  /usr/bin/printenv ?
+   
+  /usr/bin/true
+  /usr/bin/true  | /usr/bin/false
+  /usr/bin/printenv ?
+   
+  /usr/bin/true
+  /usr/bin/false | /usr/bin/true
+  /usr/bin/printenv ?
+   
+  /usr/bin/true
+  /usr/bin/false | /usr/bin/false
+  /usr/bin/printenv ?
+
+  echo End of test
+END
+
+echo

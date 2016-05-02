@@ -1,0 +1,48 @@
+ESTIMATE of time to complete assignment: 30 hours
+
+	   Start  Time
+     Date  Time   Spent Work completed
+     ----  -----  ----  --------------
+     11/13 22:00  4:00  Read through spec
+     11/14 14:00  5:00  Played around with sample bash, planned out some basic structure
+     11/16 11:00  5:00  Wrote simple and subcommands
+     11/16 09:00  8:00  Wrote && || cases, working on &
+     11/18 15:00  2:00  Still working on backgrounding, pretty much finished
+     11/18 10:00  4:00  Handled some edge cases
+     11/19 18:00  5:00  Handled more edge cases, documented, debugged, etc.
+     12/03 18:00  4:00  A few more bugs...
+                  -----
+		  37:00 TOTAL time spent
+
+
+I discussed this project with Alan Liu and Alex Ringlein.
+
+There were two difficult things about this assignment. The first was that the spec seemed
+a bit esoteric at times, although definitely not more so than the average 'man' page. This
+isn't a criticism, but in paticular, I found it very complicated to work through the
+syntax of a background command. They operate somewhat counter-intuitively at times, and I
+had to rewrite those chunks of code more than once.
+
+The second difficulty was syncing up my implementation with the provided one, such that
+they issue the same number of error messages, fail at the same time, set the ? variable
+at the same time, etc. This was FURTHER complicated by the fact that race conditions might
+make our shells 'synced' on one occasion, but NOT synced on another.
+
+However, I definitely found this to be one of the most engaging assignments. I'd say it
+was slightly easier than LZW, but one of the "messier" assignments (for me, at least).
+
+One thing that helped ENORMOUSLY was writing a python script to generate excessively long
+bash commands using a context-free grammar. Providing the grammar for us was incredibly
+helpful, and allowed me to generate bash commands like:
+
+( cat OUTPUT < words || ./Timer a >> OUTPUT ; 
+./nonexistent executable < words || dirs ; 
+( < words ./nonexistent executable >> OUTPUT 
+| cd zzz < words > OUTPUT | ( ./return 0 < words ) 
+&& ./return 0 | cat | cat | ./return 0 ; < OUTPUT     
+/c/cs323/Hwk5/Tests/sleeper hi 2.0 bye -1 >> OUTPUT 
+|| cat words | cat < OUTPUT ; ) 
+|| ( ./Timer a ; 
+< words cat nonexistent-file > OUTPUT ) & )
+
+(excuse the bad formatting due to linebreaks).

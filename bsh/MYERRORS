@@ -1,0 +1,6 @@
+cat: nonexistent-file: No such file or directory
+Bsh: could not execute nonexistent
+Bsh: improper use of wait
+Bsh: cannot read from file test
+Bsh: cannot read from file test
+Bsh: cannot read from file test

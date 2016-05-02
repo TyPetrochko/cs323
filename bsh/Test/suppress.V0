@@ -1,0 +1,8 @@
+#!/usr/bin/perl -p
+#
+#   suppress
+#
+# Normalize and verify Backgrounded and Completed messages
+
+s{^(Backgrounded: )\d+}{$1XXXX};
+s{^(Completed: )\d+}{$1XXXX};

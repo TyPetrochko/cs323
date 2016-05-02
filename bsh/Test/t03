@@ -1,0 +1,23 @@
+#!/bin/bash
+# Redirect stdout to nonexistent/writable file
+# REQUIRES: REDIR (>)
+
+FILES="+Bsh.tmp"
+PROGS="cat"
+
+RUN="/c/cs323/bin/run -wall=2"
+trap "/bin/rm -f $FILES; \
+      /usr/bin/killall -q -u $USER Bsh $PROGS 2>/dev/null" 0 1 2 3 9 15
+ulimit -u 300
+
+$RUN ./Bsh <<END
+cat /c/cs323/Hwk5/Tests/star.wars > +Bsh.tmp
+cat +Bsh.tmp
+
+cat /c/cs323/Hwk5/Tests/stk.txt   > +Bsh.tmp
+cat +Bsh.tmp
+
+echo End of test
+END
+
+echo

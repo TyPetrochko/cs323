@@ -1,0 +1,6 @@
+( cat nonexistent-file | wait | ( < words dirs > OUTPUT || < words dirs >> OUTPUT ) )
+< OUTPUT nonexistent executable > OUTPUT ; < OUTPUT wait zzz > OUTPUT
+cat nonexistent-file < test | dirs | ( cat nonexistent-file < test > testOutput ; < test wait >> testOutput ) | cat
+ls -1234 | wc | ls; printenv ?
+cd /c/cs323 | ls
+ls & cd .. & ls

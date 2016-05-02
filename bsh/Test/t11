@@ -1,0 +1,22 @@
+#!/bin/bash
+# cd directoryName / cd
+# REQUIRES: BUILT-IN (cd)
+
+FILES=
+PROGS="pwd echo"
+
+RUN="/c/cs323/bin/run -wall=2"
+trap "/bin/rm -f $FILES; \
+      /usr/bin/killall -q -u $USER Bsh $PROGS 2>/dev/null" 0 1 2 3 9 15
+ulimit -u 300
+
+$RUN HOME=/c/cs323 ./Bsh <<END
+cd /c/cs323/Doc
+pwd
+
+cd
+pwd
+echo End of test
+END
+
+echo

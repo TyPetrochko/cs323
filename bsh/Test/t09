@@ -1,0 +1,22 @@
+#!/bin/bash
+# Simple && and ||
+# REQUIRES: AND/OR
+
+FILES=
+PROGS="true false"
+
+RUN="/c/cs323/bin/run -wall=2"
+trap "/bin/rm -f $FILES; \
+      /usr/bin/killall -q -u $USER Bsh $PROGS 2>/dev/null" 0 1 2 3 9 15
+ulimit -u 300
+RUN="/c/cs323/bin/run -wall=2"
+
+$RUN ./Bsh <<END
+/usr/bin/true  && ls -1 /c/cs323/Style
+/usr/bin/false && ls -1 /c/cs323/Style
+/usr/bin/true  || ls -1 /c/cs323/Style
+/usr/bin/false || ls -1 /c/cs323/Style
+echo End of test
+END
+
+echo

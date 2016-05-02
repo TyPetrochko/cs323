@@ -1,0 +1,40 @@
+// sleeper.c
+//
+//   Copy argv[1] to stdout, sleep argv[2] seconds, and copy argv[3] to stdout
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void Sleep (double time)
+{
+    struct timespec req, rem;
+
+    req.tv_sec  = time;
+    req.tv_nsec = (time - req.tv_sec) * 1000000000L;
+
+    while (nanosleep (&req, &rem) < 0) {
+	req.tv_sec  = rem.tv_sec;
+	req.tv_nsec = rem.tv_nsec;
+    }
+}
+
+
+int main (int argc, char *argv[])
+{
+    if (argc == 4) {
+	printf ("%s\n", argv[1]);
+	fflush (stdout);
+	argc--; argv++;
+    }
+
+    if (argc == 3) {
+	Sleep (atof(argv[1]));
+	printf ("%s\n", argv[2]);
+	exit (0);
+
+    } else {
+	fprintf (stderr, "sleeper [firstMessage] sleepTime secondMessage\n");
+	exit (1);
+    }
+}

@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+#    reachable COMMAND
+#
+# Use valgrind to determine how much memory Expand is using on exit and
+# append that line to the standard output.
+
+LOG=/tmp/valgrind.LOG.$$
+trap '/bin/rm -f $LOG' 0 1 2 3 9 15
+
+# Run command under valgrind
+/usr/bin/valgrind --leak-check=summary --child-silent-after-fork=yes \
+		  --log-file=$LOG $*
+
+# Extract exit line
+/usr/bin/egrep exit $LOG |/usr/bin/perl -p -e 's{==\d+== }{}'

@@ -1,0 +1,44 @@
+#!/bin/bash
+# Indicator: Operations on large files in small memory
+
+RUN="/c/cs323/bin/run -dsize=5000k"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+WORDS=/c/cs323/Doc/linux.words
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Create some local files
+/bin/cp  -f $FILES/a                   $LOCAL.a
+/bin/cat $WORDS $WORDS               > $LOCAL.b
+/bin/cat $WORDS $WORDS $WORDS        > $LOCAL.c
+/bin/cat $WORDS $WORDS $WORDS $WORDS > $LOCAL.d
+/bin/cp  -f $FILES/e                   $LOCAL.e
+
+# Create nonexistent archive and add files; list to verify
+$RUN ./Far r $ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Change contents of C
+/bin/cp -f $FILES/c $LOCAL.c
+
+# Replace all files in archive; list to verify
+$RUN ./Far r $ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Delete C from archive; list to verify
+$RUN ./Far d $ARKIV $LOCAL.c
+$RUN ./Far t $ARKIV | sort

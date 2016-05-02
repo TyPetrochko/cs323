@@ -1,0 +1,38 @@
+#!/bin/bash
+# Delete: Files exist only in archive
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Create nonexistent archive and add files; list to verify
+$RUN ./Far r $ARKIV $FILES/a $FILES/b $FILES/c $FILES/d $FILES/e
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Delete files in archive; list to verify
+$RUN ./Far d $ARKIV $FILES/d $FILES/b
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Delete first file in archive; list to verify
+$RUN ./Far d $ARKIV $FILES/a
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Delete last file in archive; list to verify
+$RUN ./Far d $ARKIV $FILES/e
+$RUN ./Far t $ARKIV | sort

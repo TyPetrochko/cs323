@@ -1,0 +1,22 @@
+#!/bin/bash
+# List: Nonexistent/unreadable archive (error)
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Induce one error message
+$RUN ./Far t $ARKIV |& /usr/bin/wc -l

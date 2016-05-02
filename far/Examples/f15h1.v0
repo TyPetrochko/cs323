@@ -1,0 +1,418 @@
+		P R E L I M I N A R Y    S P E C I F I C A T I O N
+
+					 Due 2:00 AM, Friday, 18 September 2015
+
+CPSC 323   Homework #1  'Tis a Far, Far better thing ...
+
+(60 points) Implement in C the file archiver Far, a relative of the system
+utilities ar and tar that offers a limited subset of their functionality:
+
+  NAME
+    Far - mini file archiver
+   
+  SYNOPSIS
+    Far key archive [name]*
+   
+  DESCRIPTION
+    Far uses a single "archive" file to maintain a collection of regular files
+    and directories called "members".  The KEY argument specifies the action
+    to be taken (see below); the ARCHIVE argument specifies the name of the
+    archive file; and the NAME arguments (if any) are names specifying which
+    files or directories to save, to restore, or to delete.
+
+    The single-character KEY argument must be one of the following letters:
+   
+    r  For each NAME specified, if there is a member of the archive with
+       that name, replace it in the archive by the current version of the
+       corresponding file; otherwise insert the file with that name at the
+       end of the archive.  If the archive file does not exist, create an
+       empty archive first.  If NAME specifies a directory rather than a
+       file, recursively replace all filenames in that directory as well
+       (except for the special directories . and ..).  Issue an error message
+       if a file or directory does not exist.  Note that only the name of a
+       directory is stored in the archive.
+
+    x  For each NAME specified, extract (i.e., create or overwrite the file
+       corresponding to) each member of the archive with that name and any
+       member in a directory hierarchy with that name.  If there are no NAME
+       arguments, extract every member of the archive.  Issue an error message
+       if the archive file does not exist or if a NAME does not cause an
+       extraction.  (Extraction may require creating directories, but Far does
+       not recreate or overwrite existing directories.  Similarly, Far issues
+       an error message rather than overwrite existing read-only files.)
+
+    d  For each NAME specified, delete from the archive the member with that
+       name and any member in a directory hierarchy with that name.  Issue an
+       error message if the archive file does not exist or if a NAME does not
+       cause a deletion.  (Note that the file with the name specified need not
+       exist outside the archive.)
+
+    t  PRINT to the standard output the size (in bytes) and name of each member
+       of the archive (in order of appearance) using a "%8d %s" format.  Ignore
+       any name arguments.  (Note that the size of a directory is 0, and that
+       the name should be followed by a /.)
+
+    If the name of the archive is -, read the archive from the standard input.
+    The r and d keys write the new archive file to the standard output, but the
+    t and x keys (which do not modify the archive) do not.
+
+  LIMITATIONS
+    Far only handles regular files and directories; symbolic links, sockets,
+    FIFOs, and devices are ignored.  Far treats hard links to the same inode
+    as distinct files.
+   
+Use the submit command (see below) to turn in the source file(s) for Far, a
+Makefile, and your log file (see below) as assignment 1; e.g.,
+
+  % /c/cs323/bin/submit 1 Makefile Far.c log.Far
+
+YOU MUST SUBMIT YOUR FILES (INCLUDING THE LOG FILE) AT THE END OF ANY SESSION
+WHERE YOU HAVE SPENT AT LEAST ONE HOUR WRITING OR DEBUGGING CODE, AND AT LEAST
+ONCE EVERY HOUR DURING LONGER SESSIONS.  (All submissions are retained.)
+
+
+Examples
+~~~~~~~~
+1. Assume that the current working directory and its subdirectory zoo contain
+   the files
+    
+       Name    Size            Name        Size
+       ant      123            zoo/cat      443
+       bat     2468            zoo/dog    34333
+    
+   Then
+    
+       % Far r Arkiv ant zoo
+    
+   creates the archive Arkiv with members ant, zoo, zoo/cat, and zoo/dog.
+    
+       % cp zoo/cat ant ; rm zoo/dog
+       % Far x Arkiv ant zoo/dog
+    
+   changes ant and deletes zoo/dog, but then restores them from the archive.
+    
+       % Far d Arkiv zoo/cat
+    
+   deletes member zoo/cat from Arkiv.
+    
+       % cp zoo/cat ant
+       % Far r Arkiv ant bat
+       
+   replaces member ant by its new contents (= zoo/cat) and adds member bat.
+    
+       % Far t Arkiv
+	    443 ant
+	      0 zoo/                                                           |
+	  34333 zoo/dog
+	   2468 bat
+    
+   lists the contents of Arkiv.
+
+2. Assume that the archive contains the members
+
+       cat     alpha/        alpha/beta/        alpha/beta/gamma/
+       dog     alpha/cat     alpha/beta/cat     alpha/beta/gamma/cat
+	       alpha/dog     alpha/beta/dog     alpha/beta/gamma/dog
+
+   Then
+    
+       % Far x Arkiv alpha
+    
+   extracts every file except for cat and dog;
+    
+       % Far x Arkiv alpha/beta
+    
+   extracts alpha/beta, alpha/beta/cat, alpha/beta/dog, alpha/beta/gamma,
+   alpha/beta/gamma/cat, and alpha/beta/gamma/dog; and
+    
+       % Far x Arkiv alpha/beta/gamma
+    
+   extracts alpha/beta/gamma, alpha/beta/gamma/cat, and alpha/beta/gamma/dog.
+
+
+Notes
+~~~~~
+1. (Optional; No Extra Credit)
+   * Save and restore the modification time and mode of each file.
+   * Check for the archive being a named file or in a named directory.
+   * Handle hard and soft links, sockets, FIFOs, and devices correctly.
+   * Allow wildcards for the x and d keys.
+   * Modify the action of the t key to list only the named files (a la tar).
+
+2. Far must:
+
+   * Print a one-line message to stderr and continue if possible, whenever
+     it encounters errors (including from system calls).  If Far is unable
+     to continue (e.g., the flag specified is illegal), it must restore the
+     archive to its original state.
+
+   * Create an archive whose length is proportional to the sum of the lengths
+     of its members (and their full names).  For example, Far may not use a
+     delete flag to indicate that a member has been deleted (or replaced by a
+     later version) to avoid having to remove its contents from the archive.
+
+   * Handle all of the names specified on the command line in ONE pass over
+     the contents of the archive, replacing, extracting, or deleting files and
+     writing the new archive.  (Depending on how your Far is implemented, it
+     may then either copy or rename the new archive back to the old archive.)
+
+   * Ignore trailing /s in the NAME arguments.
+
+   * Treat names that do not begin with / as relative to the current working
+     directory.  This enables an archive created from files in one directory
+     to be extracted into a different directory.
+
+   * Insert only one copy of NAME into the archive even if it is specified more
+     than once.  For example, in
+
+       % Far r Arkiv zoo/cat zoo
+
+     zoo/cat is specified both explicitly and implicitly as a member of zoo.
+     Note that FILE and ./FILE are different, but FILE and FILE are not, so
+
+       % Far r ARKIV cat ./cat
+
+     should add two copies to the archive, but
+
+       % Far r ARKIV cat cat
+
+     should add only one.  No error message is issued.
+
+   * Handle binary files (i.e., files with nonprinting chars such as nulls).
+
+   * Delete any temporary files that it creates.
+
+   * Free all storage before exiting, even in the event of nonfatal errors.
+
+   * Fail gracefully when the archive file is corrupted (i.e., does not have
+     the proper format).  Note:  Here "fail gracefully" means not go into an
+     infinite loop or get a segmentation fault.
+
+3. Far must not:
+
+   * Read into memory the entire archive file, an entire replacement file, or
+     an entire member being extracted (unless it fits in a single I/O buffer).
+
+   * Read the archive more than once.  Thus it must read from the first byte
+     to the last byte without retracing its steps (e.g., by using fseek() or
+     rewind() to move backward in the file and reread its contents), which is
+     impossible if the name of the archive is - so it is reading from stdin.
+
+   * Use system() or any of the execve() family of system calls (which could be
+     used to invoke /bin/tar).
+
+4. Far may assume that:
+
+   * The archive is either a regular file or does not exist.
+
+   * The maximum length of any file or member name that it encounters or needs
+     to generate is PATH_MAX (#include <linux/limits.h>).
+
+     Aside: Note that this is never a safe assumption when writing real code.
+     See http://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html for
+     a more complete discussion.
+
+   * Filenames do not contain embedded whitespace or null characters.  (This
+     makes it slightly easier to store filenames in an archive.)
+
+   * Files with distinct names are different; e.g., FILE and ./FILE and
+     ../CurrentDirectory/FILE are different files, as are hard and soft links
+     to FILE, even though they refer to the same inode.
+
+   * Files and directories will not appear/disappear while Far is running.
+
+   * The standard input is NOT a pipe if the archive is -.  Thus Far may use
+     fseek() and ftell(), which are not defined on pipes.
+
+   * malloc() and realloc() never fail.
+
+   The purpose of these assumptions is to reduce the amount of (uninteresting)
+   code required at the cost of making Far less robust or less comprehensive.
+
+5. The format of the archive (i.e., how and where member names and files are
+   stored) is NOT specified.  Thus your archives need not match those written
+   by Hwk1/Far.
+
+   One consequence of this observation is that the order in which the t key
+   lists the members of the archive is indeterminate.  Thus the test scripts
+   will always sort that list, and the requirement that the list be "in order
+   of appearance" will NOT be checked.  In particular, if the format includes a
+   global header that associates member names with sets of bytes, then you may
+   store members in the order in which they appear in the header.
+
+6. Useful library functions:
+
+   * lstat(2), rename(2), unlink(2), fseek(3), and ftell(3) deal with files
+     (although they do not work with stdin and stdout).  Do not use stat(),
+     which gives information about the file to which a symbolic link points
+     rather than about the link itself.
+
+   * mkdir(2), opendir(3), readdir(3), and closedir(3) deal with directories
+     (see /c/cs323/Hwk1/Dir.c for an example).
+
+   * mkstemp(3) and tmpfile(3) may be used to create temporary files, but such
+     files must be deleted when Far exits.  You may also create a temporary
+     file named ARCHIVE.bak, where ARCHIVE is the name of the archive (i.e.,
+     you may assume that there is no file named ARCHIVE.bak).  Do not use
+     tempnam() or tmpnam(), which are similar to mkstemp() but deprecated.
+     Since mkstemp() is not part of the C99 standard, you must #define
+     _GNU_SOURCE before you #include <stdlib.h>.
+
+   See their man pages (e.g., "man 2 stat" or "man 3 tmpfile") for details.
+
+7. The tests on the public and final scripts will use valgrind, a system that
+   detects uninitialized variables, malloc() errors, etc.  To use it yourself,
+   type
+
+     % /usr/bin/valgrind -q ./Far ...
+
+   See http://valgrind.org/docs for details.  (There is a link to this URL on
+   the class web page.)
+
+8. The public grading script is /c/cs223/Hwk1/test.Far.  The command
+
+     % /c/cs323/Hwk1/test.Far
+
+   runs all of the public tests; the command
+
+     % /c/cs323/Hwk1/test.Far IJ
+
+   runs only the test labelled IJ, which is the script /c/cs323/Hwk1/Tests/tIJ
+   with expected output /c/cs323/Hwk1/Tests/tIJ.t.  Multiple IJs are allowed.
+
+   You can use the script /c/cs323/bin/tester to run your own tests.
+
+9. Handling directories will be worth at most 10/8/4 points for the r/x/d key,
+   respectively.
+
+A. Fine points:
+
+   * The number of files will always be small enough that Far can use linear
+     search in an unordered array rather than something more efficient like
+     hashing or binary search trees.
+
+   * When extracting, if the same file is specified explicily or implicitly
+     more than once on the command line as in
+
+       % ./Far x Arkiv zoo/c zoo/
+
+     or
+
+       % ./Far x Arkiv zoo/ zoo/c
+
+     where zoo/ and zoo/c are members of the archive, then Far need not issue
+     an error message about a NAME not causing an extraction.  The explanation
+     is simple:  When a file is extracted, only one NAME is credited with
+     causing the extraction, but which NAME depends on how the list of names
+     is searched.  Thus the final test script will not test this behavior.
+
+   * Assume that the archive file Arkiv has members zoo/ (which is a directory)
+     and zoo/ant (which is a file), and that there exists a regular file (not a
+     directory) named zoo in the current working directory.  When Far extracts
+     zoo, as in
+
+       % Far x Arkiv zoo
+
+     it will issue three error messages of the form:
+
+       + cannot create zoo/
+       + cannot create zoo/ant
+       + cannot find zoo
+
+     tar (to which Far is related) will delete the file zoo and create a
+     directory named zoo before extracting zoo/ant from Arkiv.  Arguably this
+     is wrong since it would lead to the loss of the regular file zoo.
+
+B. Keep track of how you spend your time in completing this assignment.  Your
+   log file should be of the general form (that below is fictional):
+
+     ESTIMATE of time to complete assignment: 10 hours
+
+	   Start  Time
+     Date  Time   Spent Work completed
+     ----  -----  ----  --------------
+     9/03  10:15  0:50  Read assignment and documentation for tar and ar
+     9/05  20:15  1:00  Played with Hwk1/Far to discover how it works
+     9/08  12:45  0:30  Sketched solution using recursion
+     9/08  14:00  0:10  Recursive solution cannot handle all cases
+     9/10  21:20  1:00  Sketched new solution using two stacks and a queue
+     9/12  09:00  5:00  Wrote/typed-in program; eliminated compile-time errors
+     9/13  20:00  1:30  Debugged program; it passes every public test
+		 -----
+		 10:00  TOTAL time spent
+
+     I discussed my solution with: Peter Salovey, Ben Polak, Tamar Gendler,
+     and Jonathan Holloway.
+
+     <A brief discussion of the major difficulties encountered>
+
+   but MUST contain
+
+   * your estimate of the time required (made prior to writing any code),
+
+   * the total time you actually spent on the assignment,
+
+   * the names of all others (but not members of the teaching staff) with whom
+     you discussed the assignment for more than 10 minutes, and
+
+   * a brief discussion (100 words MINIMUM) of the major difficulties that you
+     encountered in developing/debugging (and there will always be some).
+
+   This log will generally be worth 5-10% of the total grade.
+
+   N.B.  To facilitate analysis, the log file MUST be the only file submitted
+   whose name contains the string "log" and the estimate / total MUST be on the
+   only line in that file that contains the string "ESTIMATE" / "TOTAL".
+
+C. The submit program can be invoked in eight different ways:
+    
+       /c/cs323/bin/submit  1  Makefile Far.c time.log
+    
+   submits the named source files as your solution to Homework #1;
+    
+       /c/cs323/bin/check  2
+    
+   lists the files that you submitted for Homework #2;
+    
+       /c/cs323/bin/unsubmit  3  error.submit bogus.solution
+    
+   deletes the named files that you submitted previously for Homework #3 (which
+   is useful if you accidentally submit the wrong file);
+    
+       /c/cs323/bin/makeit  4  Far
+    
+   runs "make" on the files that you submitted previously for Homework #4;
+    
+       /c/cs323/bin/testit  5  Far
+    
+   runs the public test script for Far using the files that you submitted
+   previously for Homework #5;
+    
+       /c/cs323/bin/protect  6  Far.c time.log
+    
+   protects the named files that you submitted previously for Homework #6 (so
+   they cannot be deleted accidentally);
+    
+       /c/cs323/bin/unprotect  7  Far.c time.log
+    
+   unprotects the named files that you submitted previously for Homework #7 (so
+   they can be deleted); and
+    
+       /c/cs323/bin/retrieve  8  Far.c time.log
+    
+   and
+    
+       /c/csXYZ/bin/retrieve  8  -d"2012/09/11 20:00" Far.c
+    
+   retrieve copies of the named files that you submitted previously for
+   Homework #8 (in case you accidentally delete your own copies).  The day
+   and hour are optional and request the latest submission prior to that time
+   (see the -d flag under "man co" for how to specify times).
+    
+D. Prudence (and a 5-point penalty for code that does not make) suggests that
+   you run makeit ("makeit 1 Far") after submitting your source files (see
+   below).  Better yet, run testit ("testit 1 Far").
+
+E. Hwk1/Far.h contains the #include files and some macros from my solution.
+
+								CS-323-09/02/15

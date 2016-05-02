@@ -1,0 +1,42 @@
+#!/bin/bash
+# Replace: Files in archive but do not exist (error)
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Create some local files
+/bin/cp -f $FILES/a $LOCAL.a
+/bin/cp -f $FILES/b $LOCAL.b
+/bin/cp -f $FILES/c $LOCAL.c
+/bin/cp -f $FILES/d $LOCAL.d
+
+# Create nonexistent archive and add files; list to verify
+$RUN ./Far r $ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Remove A, B, C, and D; and create new versions of A and C
+/bin/rm -f $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d
+/bin/cp -f $FILES/f $LOCAL.a
+/bin/cp -f $FILES/e $LOCAL.c
+
+# Replace all files in archive, inducing two errors
+$RUN ./Far r $ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d |& /usr/bin/wc -l
+echo
+
+# List to verify archive is correct
+$RUN ./Far t $ARKIV | sort

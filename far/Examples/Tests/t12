@@ -1,0 +1,46 @@
+#!/bin/bash
+# Indicator: Size proportional to sum of member sizes?
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+WORDS=/c/cs323/Doc/linux.words
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Create some local files (B is very large)
+/bin/cp $FILES/a $LOCAL.a
+/bin/cp $WORDS   $LOCAL.b
+/bin/cp $FILES/c $LOCAL.c
+
+# Create nonexistent archive and add files; list to verify
+$RUN ./Far r $ARKIV $LOCAL.a $LOCAL.b $LOCAL.c
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Remove local files
+/bin/rm -f $LOCAL.a $LOCAL.b $LOCAL.c
+
+# Delete B (the very large file)
+$RUN ./Far d $ARKIV $LOCAL.b
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Verify that the size of the archive is not too large
+# Note: BOUND >> 2*PATH_MAX + size($FILES/a) + size($FILES/b)
+BOUND=10000
+SIZE=`wc -c < $ARKIV`
+if test $SIZE -gt $BOUND; then
+  echo "size(archive) = $SIZE > $BOUND"
+fi

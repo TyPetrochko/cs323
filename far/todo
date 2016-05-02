@@ -1,0 +1,20 @@
+TODO:
+
+1) Consolidate
+2) Fix triple error bug
+3) Fix file being replaced by directory
+4) Fix directory being replaced by file
+5) For 3 & 4, look to extractFileFromArchive command
+6) Make sure you don't overwrite nameBuffer array
+
+THEN 
+
+1) Handle read-only directories better
+2) Consolidate all commands into one
+3) Make sure that when an invalid name 
+    for a file is given, it yields an appropriate error (ideally put this at 
+    top of consolidated function, with a "validateArchive(char * path)" 
+    function)
+4) Make sure file permissions are correct on extracted files
+5) Make sure it works with paths starting with "/"
+6) Make sure corrupted archive files fail gracefully

@@ -1,0 +1,54 @@
+#!/bin/bash
+# Extract: Directory exists only in archive
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$LOCAL.DIRECTORY $ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Remove existing local directory
+if test -d $LOCAL.DIRECTORY; then
+  /bin/chmod u+rwx $LOCAL.DIRECTORY
+  /bin/rm -rf $LOCAL.DIRECTORY
+fi
+
+# Create some local files and a local directory containing some files
+/bin/mkdir $LOCAL.DIRECTORY
+/bin/cp -f $FILES/a $LOCAL.a
+/bin/cp -f $FILES/b $LOCAL.DIRECTORY
+/bin/cp -f $FILES/c $LOCAL.DIRECTORY
+/bin/cp -f $FILES/d $LOCAL.DIRECTORY
+/bin/cp -f $FILES/e $LOCAL.e
+
+# Create nonexistent archive and add some files; list to verify
+$RUN ./Far r $ARKIV $LOCAL.a $LOCAL.DIRECTORY $LOCAL.e
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Remove local files and local directory
+/bin/rm -rf $LOCAL.a $LOCAL.DIRECTORY $LOCAL.e
+
+# Restore local files and local directory
+$RUN ./Far x $ARKIV $LOCAL.e $LOCAL.DIRECTORY $LOCAL.a
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Verify restored files
+/usr/bin/cmp -c $FILES/a $LOCAL.a
+/usr/bin/cmp -c $FILES/b $LOCAL.DIRECTORY/b
+/usr/bin/cmp -c $FILES/c $LOCAL.DIRECTORY/c
+/usr/bin/cmp -c $FILES/d $LOCAL.DIRECTORY/d
+/usr/bin/cmp -c $FILES/e $LOCAL.e
+/bin/ls      -1 $LOCAL.a $LOCAL.DIRECTORY $LOCAL.e

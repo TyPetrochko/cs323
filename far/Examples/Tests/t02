@@ -1,0 +1,50 @@
+#!/bin/bash
+# Replace: File differs from member in archive
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Create some local files
+/bin/cp -f $FILES/a $LOCAL.a
+/bin/cp -f $FILES/b $LOCAL.b
+/bin/cp -f $FILES/c $LOCAL.c
+/bin/cp -f $FILES/d $LOCAL.d
+
+# Create nonexistent archive and add files; list to verify
+$RUN ./Far r $ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Change contents of A and C
+/bin/cp -f $FILES/ar $LOCAL.a
+/bin/cp -f $FILES/cr $LOCAL.c
+
+# Replace B and C in archive
+$RUN ./Far r $ARKIV $LOCAL.b $LOCAL.c
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Remove B and C
+/bin/rm -f $LOCAL.[bc]
+
+# Extract B and C from archive and verify contents are correct
+$RUN ./Far x $ARKIV $LOCAL.b $LOCAL.c
+$RUN ./Far t $ARKIV | sort
+/usr/bin/cmp -c $FILES/ar $LOCAL.a
+/usr/bin/cmp -c $FILES/b  $LOCAL.b
+/usr/bin/cmp -c $FILES/cr $LOCAL.c
+/usr/bin/cmp -c $FILES/d  $LOCAL.d

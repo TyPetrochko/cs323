@@ -1,0 +1,50 @@
+#!/bin/bash
+# Extract: Files exist only in archive
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Create some local files
+/bin/cp -f $FILES/a $LOCAL.a
+/bin/cp -f $FILES/b $LOCAL.b
+/bin/cp -f $FILES/c $LOCAL.c
+/bin/cp -f $FILES/d $LOCAL.d
+
+# Create nonexistent archive and add files; list to verify
+$RUN ./Far r $ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Remove A, B, C, and D and restore A and C
+/bin/rm -f $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d
+$RUN ./Far x $ARKIV $LOCAL.a $LOCAL.c
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Verify that A and C are correct and that B and D were not restored
+/usr/bin/cmp -c $FILES/a $LOCAL.a
+/usr/bin/cmp -c $FILES/c $LOCAL.c
+/bin/ls      -1 $LOCAL.?
+echo
+
+# Restore B and D and verify that all are correct
+$RUN ./Far x $ARKIV $LOCAL.b $LOCAL.d
+$RUN ./Far t $ARKIV | sort
+/usr/bin/cmp -c $FILES/a $LOCAL.a
+/usr/bin/cmp -c $FILES/b $LOCAL.b
+/usr/bin/cmp -c $FILES/c $LOCAL.c
+/usr/bin/cmp -c $FILES/d $LOCAL.d

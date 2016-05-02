@@ -1,0 +1,39 @@
+#!/bin/bash
+# Extract: Files not in archive (error)
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Create some local files
+/bin/cp -f $FILES/a $LOCAL.a
+/bin/cp -f $FILES/b $LOCAL.b
+/bin/cp -f $FILES/c $LOCAL.c
+
+# Create nonexistent archive and add files; list to verify
+$RUN ./Far r $ARKIV $LOCAL.a $LOCAL.b $LOCAL.c
+$RUN ./Far t $ARKIV | sort
+echo
+
+# Remove A, B, C, and D; and restore A and C and files not in archive,
+# inducing two errors
+/bin/rm -f $LOCAL.[a-d]
+$RUN ./Far x $ARKIV $LOCAL.c $FILES/e $LOCAL.b $FILES/d $LOCAL.a |& /usr/bin/wc -l
+echo
+$RUN ./Far t $ARKIV | sort
+echo
+
+/bin/ls -1 $LOCAL.?

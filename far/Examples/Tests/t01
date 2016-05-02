@@ -1,0 +1,30 @@
+#!/bin/bash
+# Replace: Create nonexistent archive and add files
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Create nonexistent archive and add files; list to verify
+$RUN ./Far r $ARKIV $FILES/a $FILES/b $FILES/c $FILES/d $FILES/e
+$RUN ./Far t $ARKIV | sort
+echo
+
+/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL
+
+# Repeat with archive -
+$RUN ./Far r - </dev/null >$ARKIV $FILES/a $FILES/b $FILES/c $FILES/d $FILES/e
+$RUN ./Far t - <$ARKIV            | sort

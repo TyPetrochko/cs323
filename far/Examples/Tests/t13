@@ -1,0 +1,61 @@
+#!/bin/bash
+# Illegal flag specified (error)
+
+RUN="/usr/bin/valgrind -q"
+FILES=/c/cs323/Hwk1/Tests/Files
+LOCAL=TEST.FAR
+ARKIV=$LOCAL.ARCHIVE
+
+# Set collating sequence for sort
+export LC_ALL=C
+
+# Delete all files created when exiting
+ALL="$ARKIV $LOCAL.a $LOCAL.b $LOCAL.c $LOCAL.d $LOCAL.e"
+trap "/bin/chmod -f +rwx $ALL; /bin/rm -rf $ALL" 0 1 2 3 9 15
+
+# Remove existing archive file
+if test -e $ARKIV; then
+  /bin/rm -rf $ARKIV
+fi
+
+# Create nonexistent archive and add files; list to verify
+$RUN ./Far r $ARKIV $FILES/a $FILES/b $FILES/c $FILES/d $FILES/e
+$RUN ./Far t $ARKIV | sort
+
+# Try all invalid lower case letters as flags
+$RUN ./Far a $ARKIV $FILES/a |& wc -l
+$RUN ./Far b $ARKIV $FILES/a |& wc -l
+$RUN ./Far c $ARKIV $FILES/a |& wc -l
+$RUN ./Far e $ARKIV $FILES/a |& wc -l
+$RUN ./Far f $ARKIV $FILES/a |& wc -l
+$RUN ./Far g $ARKIV $FILES/a |& wc -l
+$RUN ./Far h $ARKIV $FILES/a |& wc -l
+$RUN ./Far i $ARKIV $FILES/a |& wc -l
+$RUN ./Far j $ARKIV $FILES/a |& wc -l
+$RUN ./Far k $ARKIV $FILES/a |& wc -l
+$RUN ./Far l $ARKIV $FILES/a |& wc -l
+$RUN ./Far m $ARKIV $FILES/a |& wc -l
+$RUN ./Far n $ARKIV $FILES/a |& wc -l
+$RUN ./Far o $ARKIV $FILES/a |& wc -l
+$RUN ./Far p $ARKIV $FILES/a |& wc -l
+$RUN ./Far q $ARKIV $FILES/a |& wc -l
+$RUN ./Far s $ARKIV $FILES/a |& wc -l
+$RUN ./Far u $ARKIV $FILES/a |& wc -l
+$RUN ./Far v $ARKIV $FILES/a |& wc -l
+$RUN ./Far w $ARKIV $FILES/a |& wc -l
+$RUN ./Far y $ARKIV $FILES/a |& wc -l
+$RUN ./Far z $ARKIV $FILES/a |& wc -l
+
+# Try all upper case letters that would be valid if lower case
+$RUN ./Far R $ARKIV $FILES/a |& wc -l
+$RUN ./Far T $ARKIV $FILES/a |& wc -l
+$RUN ./Far X $ARKIV $FILES/a |& wc -l
+$RUN ./Far D $ARKIV $FILES/a |& wc -l
+echo
+
+# Try some digits and punctuation
+$RUN ./Far 0 $ARKIV $FILES/a |& wc -l
+$RUN ./Far 1 $ARKIV $FILES/a |& wc -l
+$RUN ./Far + $ARKIV $FILES/a |& wc -l
+$RUN ./Far - $ARKIV $FILES/a |& wc -l
+echo

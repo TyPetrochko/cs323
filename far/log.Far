@@ -1,0 +1,32 @@
+ESTIMATE of time to complete assignment: 20 hours
+
+	   Start  Time
+     Date  Time   Spent Work completed
+     ----  -----  ----  --------------
+     9/8  20:00   2:00  Read assigned readings, started planning program
+     9/8  23:00   3:00  Kept planning program on paper
+     9/9  17:00   4:00  Kept planning on paper
+     9/9  20:00   4:00  Kept planning on paper
+     9/10 20:00   5:00  Started writing program
+     9/11 11:00   6:00  Finished with r command for files
+     9/12 11:00   8:00  Wrote all other commands and debugged
+     9/13 11:00   5:00  Debugged and started writing delete command
+     9/14 11:00   3:00  Debugged
+     9/17 11:00   6:00  Debugged
+                  -----
+		  46:00 TOTAL time spent
+
+
+Before starting the assignment, I conversed with Sam Brenner.
+
+For me, organization was a huge mess. I quickly got into trouble copy-and-
+-pasting code for the different commands, rather than making smaller, modular
+functions and consolidating code.
+
+Another issue for me was getting lost in my own assignment: as my codebase grew
+I found it increasingly difficult to access the right function. In the future
+I'll be able to fix this by making smaller functions and re-using code.
+
+I also had issues working with gdb, since I've never really used it. What
+helped me most was adding debug statements and always maintaining a "debug"
+build along with my regular build.
